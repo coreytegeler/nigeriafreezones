@@ -19,47 +19,43 @@ var map, rows, headers, entries;
 // }
 
 function openPopup(e) {
-	console.log(e.target._icon);
 	e.target._icon.classList.add('active');
 }
 
 function closePopup(e) {
-	console.log(e.target._icon);
 	e.target._icon.classList.remove('active');
 }
 
 function plotPoint(pointObj) {
 	var coordsArr = pointObj[6].split(',');
 	var coords = [Number(coordsArr[0]), Number(coordsArr[1])];
-	var markerHtml = '<div class="marker-label"><div class="marker-label-inner">'+pointObj[0]+'</div><div class="leaflet-popup-tip-container"><div class="leaflet-popup-tip"></div></div></div>';
+	var popupHtml = `<div class="popup-label">${pointObj[0]}</div>`;
+	var props = {};
+
+	var markerHtml = `<div class="marker-label"><div class="marker-label-inner">${pointObj[0]}</div><div class="leaflet-popup-tip-container"><div class="leaflet-popup-tip"></div></div></div>`;
 	var markerIcon = L.divIcon({
 		className: 'marker',
 		iconSize: 30,
 		html: markerHtml
 	});
-
-
-	var popupHtml = '<div class="popup-label">'+pointObj[0]+'</div>';
-	pointObj.forEach(function(field, i) {
-		if(i && field) {
-			popupHtml += '<div class="popup-field"><div class="popup-field-label">'+headers[i]+'</div><div class="popup-field-value">'+field+'</div></div>';
-		}
-	});
 	var marker = L.marker(coords, {
 		icon: markerIcon
 	});
+	marker.addTo(map);
+	pointObj.forEach(function(field, i) {
+		if(i && field) {
+			var header = headers[i];
+			popupHtml += `<div class="popup-field"><div class="popup-field-label">${header}</div><div class="popup-field-value">${field}</div></div>`;
+			props[header] = field;
+			// marker._icon.attribu[slugify(header)] = field;
+			marker._icon.setAttribute('data-'+slugify(header), slugify(field));
+			// console.log(slugify(header), marker);
+		}
+	});
 
-	marker.addTo(map)
 	var popup = marker.bindPopup(popupHtml);
-	console.log(popup);
 	popup.on('popupopen', openPopup);
 	popup.on('popupclose', closePopup);
-	// L.circleMarker(coords, {
-	// 	color: 'red',
-	// 	fillColor: 'red',
-	// 	fillOpacity: 1,
-	// 	radius: 5
-	// })
 }
 
 function plotPoints() {
@@ -73,7 +69,6 @@ function createMap() {
 	var rasterLayer = L.tileLayer(rasterUrl, {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map);
-	console.log(rasterLayer);
 	rasterLayer.setUrl(vectorUrl);
 
 
@@ -84,21 +79,39 @@ function createMap() {
 	plotPoints();
 }
 
-function sortValues() {
-	headers = rows[0];
-	rows.shift();
-	// entries = rows.map((row,i) => {
-		// var obj = {
-		//   date: row.shift(),
-		//   data: row
-		// };
-		// return obj;
-	// });
-	// printValues();
+function createFilter() {
+// 	// var fieldsets = document.querySelectAll('fieldset.options');
+// 	headers.forEach(function(header, i) {
+// 		// console.log(header, slugify(header));
+// 		var slug = slugify(header);
+// 		var fieldset = document.querySelector('fieldset[data-filter="'+slug+'"]');
+// 		console.log(slug);
+// 		console.log(rows[i]);
+// 	});
 
-	createMap();
+	var inputs = document.querySelectorAll('input[type="radio"]');
+	inputs.forEach(function(input) {
+		input.addEventListener('change', function(e) {
+			var value = e.target.value;
+			var name = e.target.name;
+			var markers = document.querySelectorAll('.marker');
+			markers.forEach(function(marker) {
+				if(marker.getAttribute('data-'+slugify(name)) == value || value == 'all') {
+					marker.classList.remove('hide');
+				} else {
+					marker.classList.add('hide');
+				}
+			});
+		});
+	})
 }
 
+function handleData() {
+	headers = rows[0];
+	rows.shift();
+	createMap();
+	createFilter();
+}
 
 function makeApiCall() {
 	var params = {
@@ -110,7 +123,7 @@ function makeApiCall() {
 	var request = gapi.client.sheets.spreadsheets.values.get(params);
 	request.then(function(response) {
 		rows = response.result.values;
-		sortValues();
+		handleData();
 	}, function(reason) {
 		console.error('error: ' + reason.result.error.message);
 	});
@@ -130,4 +143,11 @@ function initClient() {
 
 function handleClientLoad() {
 	gapi.load('client:auth2', initClient);
+}
+
+function slugify(string) {
+	return string
+		.toLowerCase()
+		.replace(/ /g,'-')
+		.replace(/[^\w-]+/g,'-');
 }

@@ -113,6 +113,9 @@ header {
 	background-position: center;
 	border-radius: 50%;
 	transform: scale(1.2);
+	&.hide {
+		display: none;
+	}
 	&.active, &:hover {
 		background-size: 30px;
 		cursor: pointer;
@@ -179,7 +182,7 @@ header {
 	@include mdText;
 	font-weight: bold;
 	text-align: center;
-	padding: 5px 5px 10px 5px;
+	padding: 10px 5px;
 }
 .popup-field {
 	width: 100%;
@@ -226,4 +229,42 @@ header {
 	// filter: saturate(5) hue-rotate(60deg);
 	backface-visibility: hidden;
 	transform: translate3d(0,0,0);
+}
+#filters {
+	width: 300px;
+	height: auto;
+	min-height: 5rem;
+	position: fixed;
+	right: 1rem;
+	top: 1rem;
+	z-index: 2000;
+	background-color: $light;
+	border-radius: 3px;
+	box-shadow: 0px 0px 10px 0 rgba($dark, .2);
+	legend {
+		@include mdText;
+		font-weight: bold;
+		padding: 10px 5px;
+	}
+	fieldset {
+		padding: 0 5px;
+	}
+	.option {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		border-top: 1px solid $dark;
+		@include smText;
+	}
+	input {
+		margin: 0 0 0 3px;
+	}
+	label {
+		width: 100%;
+		padding: 7px 0 7px 5px;
+		margin: 0;
+	}
+	input:hover, label:hover {
+		cursor: pointer;
+	}
 }
