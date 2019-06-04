@@ -12,11 +12,14 @@ var accessToken = 'pk.eyJ1IjoiY29yZXl0ZWdlbGVyIiwiYSI6ImNpd25xNjU0czAyeG0yb3A3cj
 var rasterUrl = 'https://api.mapbox.com/styles/v1/coreytegeler/'+rasterId+'/tiles/{z}/{x}/{y}?access_token='+accessToken;
 var vectorUrl = 'https://api.mapbox.com/styles/v1/coreytegeler/'+vectorId+'/tiles/{z}/{x}/{y}?access_token='+accessToken;
 
-var map, rows, headers, entries;
+var tileUrls = {
+	satellite: 'https://api.mapbox.com/styles/v1/coreytegeler/'+rasterId+'/tiles/{z}/{x}/{y}?access_token='+accessToken,
+	vector: 'https://api.mapbox.com/styles/v1/coreytegeler/'+vectorId+'/tiles/{z}/{x}/{y}?access_token='+accessToken
+}
 
-// function clickMarker(e) {
-// 	e.originalEvent.target.classList.toggle('active');
-// }
+var map, tiles, rows, headers, entries;
+
+var body = document.querySelector('body');
 
 function openPopup(e) {
 	e.target._icon.classList.add('active');
@@ -27,7 +30,9 @@ function closePopup(e) {
 }
 
 function plotPoint(pointObj) {
-	var coordsArr = pointObj[6].split(',');
+	var lat = pointObj[6];
+	var lng = pointObj[7];
+	var coordsArr = [lat, lng];
 	var coords = [Number(coordsArr[0]), Number(coordsArr[1])];
 	var popupHtml = `<div class="popup-label">${pointObj[0]}</div>`;
 	var props = {};
@@ -56,52 +61,103 @@ function plotPoint(pointObj) {
 	var popup = marker.bindPopup(popupHtml);
 	popup.on('popupopen', openPopup);
 	popup.on('popupclose', closePopup);
+	return marker;
 }
 
 function plotPoints() {
+	var markers = [];
 	rows.forEach(function(row) {
-		plotPoint(row);
+		var marker = plotPoint(row);
+		markers.push(marker);
 	});
+	var markersGroup = new L.featureGroup(markers);
+	map.fitBounds(markersGroup.getBounds());
+}
+
+function importPolygons(url, styles) {
+	
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange = function(e) {
+		if (this.readyState == 4 && this.status == 200) {
+			var response = JSON.parse(this.response);
+			var outline = L.geoJSON(response, {
+				style: styles
+			}).addTo(map);
+			outline.setStyle({'fill-color': 'black'});
+		}
+	};
+	xhr.open('GET', url, true);
+	xhr.send();
+
+	// console.log(outline);
+	// outline.addTo(map);
 }
 
 function createMap() {
 	map = L.map('map').setView([6.437879, 3.957112], 9);
-	var rasterLayer = L.tileLayer(rasterUrl, {
+	tiles = L.tileLayer(tileUrls['satellite'], {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 	}).addTo(map);
-	rasterLayer.setUrl(vectorUrl);
+
+	// var country = importPolygons('./assets/stanford-cv573dj9896-geojson.json', {
+	// 	color: 'red',
+	// 	weight: 1,
+	// 	fillOpacity: 0
+	// });
+	var statesUrl = './assets/stanford-nc436gk4027-geojson.json';
+	// var statesUrl = './assets/states.geojson';
+	var states = importPolygons(statesUrl, {
+		color: 'red',
+		weight: 1,
+		fillOpacity: 0
+	});
 
 
-	// L.Path('https://api.mapbox.com/styles/v1/'+mapId+'/tiles/{z}/{x}/{y}?access_token='+accessToken, {
-	// 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-	// }).addTo(map);
+	// states.setStyles({
+	// 	'stroke': 'red',
+	// 	'stroke-width': 2,
+	// 	'stroke-opacity': 1,
+	// 	'fill-color': 'transparent',
+	// 	'fill-opacity': 0,
+	// });
+
+
 
 	plotPoints();
 }
 
-function createFilter() {
-// 	// var fieldsets = document.querySelectAll('fieldset.options');
-// 	headers.forEach(function(header, i) {
-// 		// console.log(header, slugify(header));
-// 		var slug = slugify(header);
-// 		var fieldset = document.querySelector('fieldset[data-filter="'+slug+'"]');
-// 		console.log(slug);
-// 		console.log(rows[i]);
-// 	});
+function filterMarkers(e) {
+	var value = e.target.value;
+	var name = e.target.name;
+	var markers = document.querySelectorAll('.marker');
+	markers.forEach(function(marker) {
+		if(marker.getAttribute('data-'+slugify(name)) == value || value == 'all') {
+			marker.classList.remove('hide');
+		} else {
+			marker.classList.add('hide');
+		}
+	});
+}
 
-	var inputs = document.querySelectorAll('input[type="radio"]');
-	inputs.forEach(function(input) {
-		input.addEventListener('change', function(e) {
-			var value = e.target.value;
-			var name = e.target.name;
-			var markers = document.querySelectorAll('.marker');
-			markers.forEach(function(marker) {
-				if(marker.getAttribute('data-'+slugify(name)) == value || value == 'all') {
-					marker.classList.remove('hide');
-				} else {
-					marker.classList.add('hide');
-				}
-			});
+function toggleLayer(e) {
+	var id = e.target.value;
+	map.getContainer().setAttribute('data-layer', id);
+	tiles.setUrl(tileUrls[id]);
+}
+
+function createFilter() {
+	var forms = document.querySelectorAll('form');
+	forms.forEach(function(form) {
+		form.addEventListener('change', function(e) {
+			var id = form.getAttribute('id');
+			switch(id) {
+				case 'filters':
+					filterMarkers(e);
+					break;
+				case 'layers':
+					toggleLayer(e);
+					break;
+			}
 		});
 	})
 }
