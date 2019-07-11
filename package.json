@@ -1,7 +1,7 @@
 {
-	"name": "free-zones-lagos",
+	"name": "nigeriafreezones",
 	"version": "1.0.0",
-	"description": "WordPress theme for fourcornersproject.org, built with React.",
+	"description": "",
 	"main": "gulpfile.js",
 	"scripts": {
 		"watch": "gulp watch",
@@ -11,16 +11,16 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/coreytegeler/free-zones-lagos.git"
+		"url": "git+https://github.com/coreytegeler/nigeriafreezones.git"
 	},
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/coreytegeler/free-zones-lagos/issues"
+		"url": "https://github.com/coreytegeler/nigeriafreezones/issues"
 	},
-	"homepage": "https://github.com/coreytegeler/free-zones-lagos#readme",
+	"homepage": "https://github.com/coreytegeler/nigeriafreezones#readme",
 	"devDependencies": {
-		"browser-sync": "^2.3.1",
+		"browser-sync": "^2.26.7",
 		"gulp": "^4.0.0",
 		"gulp-autoprefixer": "^5.0.0",
 		"gulp-clean-css": "^3.10.0",
@@ -33,7 +33,7 @@
 		"gulp-uglify": "^3.0.2",
 		"gulp-util": "^3.0.8",
 		"merge": ">=1.2.1",
-		"npm": "^6.9.0",
+		"npm": "^6.9.2",
 		"yargs": "^6.6.0"
 	}
 }

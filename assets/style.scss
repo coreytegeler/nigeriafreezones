@@ -6,7 +6,7 @@ html, body {
 	width: 100%;
 	height: 100%;
 	margin: 0;
-	background: $lightest;
+	background: $light;
 	color: $dark;
 	font-family: sans-serif;
 	overflow-y: scroll;
@@ -28,22 +28,12 @@ h1, h2, h3, h4, h5 {
 }
 h1 {
 	@include xxlText;
-	@include displayBold;
-	@include md {
-		@include xlText;
-	}
 }
 h2 {
 	@include xlText;
-	@include displayReg;
-	@include md {
-		@include lgText;
-	}
 }
 h3 {
 	@include lgText;
-	@include displayReg;
-	font-weight: normal;
 }
 h4 {
 	@include mdText;
@@ -52,17 +42,6 @@ h4 {
 h5 {
 	@include smText;
 	font-weight: normal;
-}
-
-a, a:hover, a:visited {
-	@include underline($light, $cool);
-	color: $dark;
-}
-a:hover {
-	@include underline($light, $warm);
-	&.cool, &.warm {
-		color: $dark !important;
-	}
 }
 
 p {
@@ -108,22 +87,28 @@ header {
 	height: 100%;
 }
 .marker {
+	width: 2rem;
+	height: 2rem;
 	background-image: url(dot1.gif);
 	background-repeat: no-repeat;
 	background-position: center;
+	background-size: 1rem;
 	border-radius: 50%;
-	transform: scale(1.2);
+	// transform: scale(1.2);
 	&.hide {
 		display: none;
 	}
 	&.active, &:hover {
-		background-size: 30px;
-		cursor: pointer;
+		background-size: 1.5rem;
+		border: 2px solid $dark;
+		border-radius: 50%;
 		.marker-label {
 			display: block;
+			z-index: 999999;
 		}
 	}
 	&:hover {
+		cursor: pointer;
 		z-index: 1000 !important;
 		.marker-label {
 			display: block;
@@ -137,12 +122,12 @@ header {
 .marker-label {
 	width: 300px;
 	position: absolute;
-	left: -135px;
-	bottom: 42px;
-	// text-shadow: 0px 0px 5px rgba($dark,.5), 0px 0px 2px $dark;
-	pointer-events: none;
+	left: 13px;
+	bottom: calc(5rem - 2px);
+	// pointer-events: none;
 	z-index: 1001;
 	display: none;
+	margin-left: -150px;
 }
 .marker-label-inner {
 	display: table;
@@ -151,6 +136,7 @@ header {
 	background-color: $light;
 	border-radius: 3px;
 	box-shadow: 0px 0px 10px 0 rgba($dark, .2);
+	border: 2px solid black;
 	font-size: 20px;
 	@include mdText;
 	font-weight: bold;
@@ -160,12 +146,41 @@ header {
 	}
 }
 
+.leaflet-popup-tip-container {
+	height: 3rem;
+	width: 2px;
+	margin-left: -1.5px;
+	&::after {
+		content: "";
+		width: 2px;
+		height: 100%;
+		background-color: $dark;
+		display: block;
+		margin: auto;
+	}
+}
+.leaflet-popup-tip {
+	display: none;
+}
+
+.leaflet-overlay-pane {
+	// mix-blend-mode: overlay;
+	svg path {
+		// stroke: $highlight;
+		// stroke-width: 5px;
+	}
+}
+
 .leaflet-popup {
 	width: 300px;
-	margin-bottom: 35px;
+	position: absolute;
+	left: -150px !important;
+	bottom: calc(4rem - 2px) !important;
+	width: 300px;
+	margin-bottom: 0;
+	border: 2px solid black;
 }
 .leaflet-popup-content-wrapper {
-	width: 300px;
 	min-height: 200px;
 	background-color: $light;
 	border-radius: 3px;
@@ -182,7 +197,7 @@ header {
 	@include mdText;
 	font-weight: bold;
 	text-align: center;
-	padding: 10px 5px;
+	padding: 10px 5px 5px;
 }
 .popup-field {
 	width: 100%;
@@ -201,10 +216,16 @@ header {
 .popup-field-value {
 	display: inline;
 }
-.leaflet-popup-tip {
-	background-color: $light;
-	box-shadow: 0px 0px 10px 0 rgba($dark, .2);
+.read-more {
+	text-align: center;
+	padding: 0 0 5px 0;
+	a {
+		color: red;
+		font-weight: bold;
+		@include smText;
+	}
 }
+
 .leaflet-container {
 	a.leaflet-popup-close-button {
 		width: 20px;
@@ -226,7 +247,6 @@ header {
 	}
 }
 .leaflet-tile-pane {
-	// filter: saturate(5) hue-rotate(60deg);
 	backface-visibility: hidden;
 	transform: translate3d(0,0,0);
 }
@@ -245,6 +265,7 @@ form {
 	background-color: $light;
 	border-radius: 3px;
 	box-shadow: 0px 0px 10px 0 rgba($dark, .2);
+	border: 2px solid $dark;
 	legend {
 		@include mdText;
 		font-weight: bold;
@@ -257,7 +278,7 @@ form {
 		width: 100%;
 		display: flex;
 		align-items: center;
-		border-top: 1px solid $dark;
+		border-top: 2px solid $dark;
 		@include smText;
 	}
 	input {

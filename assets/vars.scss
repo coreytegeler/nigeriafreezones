@@ -1,31 +1,7 @@
-// @import url(https://fonts.googleapis.com/css?family=Oswald:400,700&subset=latin-ext);
-$highlight: #f6d465;
-$highdark: #d9a90d;
-$lightest: white;
-$light: #f6d465;
-$light: #ffe900;
-$light: #fbff88;
 $light: white;
 $dark: black;
 
-$warm: tomato;
-$cool: cornflowerblue;
-
-// wheat
-// tomato
-// plum
-// cornsilk
-
-$displayFont: 'Oswald', sans-serif;
-
-@mixin displayReg {
-	font-family: $displayFont;
-	font-weight: 400;
-}
-@mixin displayBold {
-	font-family: $displayFont;
-	font-weight: 700;
-}
+$highlight: #ff4040;
 
 @mixin xxlText {
 	font-size: 5rem;

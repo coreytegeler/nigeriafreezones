@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Free Trade Zones in Lagos</title>
+    <title>Mapping Free Trade Zones in Nigeria</title>
     <meta charset="utf-8" />
     <link href="https://fonts.googleapis.com/css?family=Oswald:400,700" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"/>
@@ -12,10 +12,13 @@
     <div id="map" data-layer="satellite"></div>
 
 
+    <!-- private/public/both zones
+    dates of establishment
+    Multi-use zones/single use zones etc -->
     <aside>
       <form id="filters">
         <fieldset data-filter="ownership">
-          <legend>Ownership</legend>
+          <legend>Filter</legend>
           <div class="option">
             <input id="all" type="radio" name="ownership" value="all" checked />
             <label for="all">All</label>
@@ -33,6 +36,7 @@
             <label for="unknown">Unknown</label>
           </div>
         </fieldset>
+
       </form>
       <form id="layers">
         <fieldset data-filter="ownership">

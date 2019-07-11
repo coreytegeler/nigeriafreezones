@@ -30,15 +30,16 @@ function closePopup(e) {
 }
 
 function plotPoint(pointObj) {
-	var lat = pointObj[6];
-	var lng = pointObj[7];
-	var coordsArr = [lat, lng];
-	var coords = [Number(coordsArr[0]), Number(coordsArr[1])];
-	var popupHtml = `<div class="popup-label">${pointObj[0]}</div>`;
-	var props = {};
+	var lat = pointObj[5],
+			lng = pointObj[6],
+			url = pointObj.pop(),
+			coordsArr = [lat, lng],
+			coords = [Number(coordsArr[0]), Number(coordsArr[1])],
+			popupHtml = `<div class="popup-label">${pointObj[0]}</div>`,
+			props = {};
 
 	var markerHtml = `<div class="marker-label"><div class="marker-label-inner">${pointObj[0]}</div><div class="leaflet-popup-tip-container"><div class="leaflet-popup-tip"></div></div></div>`;
-	var markerIcon = L.divIcon({
+		markerIcon = L.divIcon({
 		className: 'marker',
 		iconSize: 30,
 		html: markerHtml
@@ -47,6 +48,9 @@ function plotPoint(pointObj) {
 		icon: markerIcon
 	});
 	marker.addTo(map);
+
+	popupHtml += `<div class="read-more"><a href="${url}" target="_blank">Read more</a></div>`;
+
 	pointObj.forEach(function(field, i) {
 		if(i && field) {
 			var header = headers[i];
@@ -106,9 +110,16 @@ function createMap() {
 	// });
 	var statesUrl = './assets/stanford-nc436gk4027-geojson.json';
 	// var statesUrl = './assets/states.geojson';
-	var states = importPolygons(statesUrl, {
-		color: 'red',
-		weight: 1,
+	var states1 = importPolygons(statesUrl, {
+		// color: '#ff4040',
+		color: 'beige',
+		weight: 10,
+		fillOpacity: 0
+	});
+
+	var states2 = importPolygons(statesUrl, {
+		color: 'black',
+		weight: 2,
 		fillOpacity: 0
 	});
 
